@@ -11,7 +11,7 @@ app.use(express.json());
 
 // Route de base
 app.get('/', (req, res) => {
-  res.send('Bonjour, bienvenue dans mon projet Node.js avec CORS activé !');
+  res.send('Bonjour le serveur est en marche');
 });
 
 app.use("/auth",AuthRoute)

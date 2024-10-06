@@ -4,7 +4,7 @@ const router = express.Router();
 const AuthController =require ("../controllers/auth")
 
 router.route("/register").post(AuthController.register);
-router.route("/test").get(AuthController.test);
+router.route("/update").post(AuthController.updateUserByEmail);
 
 
 module.exports = router;
