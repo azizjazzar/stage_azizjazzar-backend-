@@ -88,3 +88,18 @@ exports.getUserByEmail = async (req, res, next) => {
     }
 };
 
+
+//tokens
+
+
+exports.generateToken = (req) => {
+    const { email } = req.body; 
+
+    const payload = {
+      email: email
+    };
+
+    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+    return token; 
+};
