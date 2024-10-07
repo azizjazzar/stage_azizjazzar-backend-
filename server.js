@@ -4,6 +4,7 @@ const connectDB = require("./config/db");
 const app = express();
 const port = 3001;
 const AuthRoute = require("./routes/auth");
+
 connectDB();
 
 app.use(cors());
@@ -11,7 +12,7 @@ app.use(express.json());
 
 // Route de base
 app.get('/', (req, res) => {
-  res.send('Bonjour le serveur est en marche');
+  res.send('le serveur est en marche');
 });
 
 app.use("/auth",AuthRoute)
