@@ -18,11 +18,7 @@ const UserSchema = new mongoose.Schema({
   },
   adresse: {
     type: String,
-  },
-  
-  mot_passe: {
-    type: String,
-  },
+  }
 });
 
 UserSchema.pre('save', async function (next) {

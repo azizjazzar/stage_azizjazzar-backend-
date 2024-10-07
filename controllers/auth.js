@@ -2,8 +2,6 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
 
-const saltRounds = 10; 
-
 exports.register = async (req, res, next) => {
     const {
         nom,
@@ -12,16 +10,13 @@ exports.register = async (req, res, next) => {
         datenaissance,
         telephone,
         adresse,
-        mot_passe,
     } = req.body;
 
     try {
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-            return res.status(400).json({ success: false, message: "Email déjà utilisé" });
+            return res.status(200).json({ success: true, message: "Utilisateur déjà enregistré", user: existingUser });
         }
-
-        const hashedPassword = await bcrypt.hash(mot_passe, saltRounds);
 
         const user = await User.create({
             nom,
@@ -30,30 +25,29 @@ exports.register = async (req, res, next) => {
             datenaissance,
             telephone,
             adresse,
-            mot_passe: hashedPassword,
         });
 
-        console.log(user);
         res.status(201).json({ success: true, message: "Utilisateur ajouté avec succès", user });
     } catch (error) {
         console.error(error); 
         next(error);
+        res.status(400).json({ success: false, message: "Erreur lors de l'ajout de l'utilisateur" });
     }
 };
-exports.updateUserByEmail = async (req, res, next) => {
-    const { email, nom, prenom, datenaissance, telephone, adresse, mot_passe } = req.body; // Récupération de l'e-mail dans le corps
 
-    console.log("Email reçu pour mise à jour:", email); // Log de l'e-mail reçu
+exports.updateUserByEmail = async (req, res, next) => {
+    const { email, nom, prenom, datenaissance, telephone, adresse, mot_passe } = req.body; 
+
+    console.log("Email reçu pour mise à jour:", email); 
 
     try {
-        const existingUser = await User.findOne({ email: email.toLowerCase() }); // Normalisation de l'e-mail
-        console.log("Utilisateur trouvé:", existingUser); // Log de l'utilisateur trouvé
+        const existingUser = await User.findOne({ email: email.toLowerCase() }); 
+        console.log("Utilisateur trouvé:", existingUser); 
 
         if (!existingUser) {
             return res.status(404).json({ success: false, message: "Utilisateur non trouvé" });
         }
 
-        // Logique de mise à jour...
         existingUser.nom = nom || existingUser.nom;
         existingUser.prenom = prenom || existingUser.prenom;
         existingUser.datenaissance = datenaissance || existingUser.datenaissance;
@@ -74,6 +68,23 @@ exports.updateUserByEmail = async (req, res, next) => {
     }
 };
 
+exports.getUserByEmail = async (req, res, next) => {
+    const { email } = req.body; 
 
+    try {
+        const user = await User.findOne({ email: email.toLowerCase() });
+        
+        if (!user) {
+            return res.status(404).json({ success: false, message: "Utilisateur non trouvé" });
+        }
 
+        user.mot_passe = undefined; 
+
+        res.status(200).json({ success: true, user });
+    } catch (error) {
+        console.error(error);
+        next(error);
+        res.status(500).json({ success: false, message: "Erreur lors de la récupération de l'utilisateur" });
+    }
+};
 
